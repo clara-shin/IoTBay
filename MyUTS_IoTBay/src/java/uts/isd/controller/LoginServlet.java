@@ -1,48 +1,35 @@
-  package uts.isd.controller;
+package uts.isd.controller;
 
- 
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import uts.isd.model.Student;
+import uts.isd.model.dao.DBManager;
 
-  import java.io.IOException;
-
-     import java.sql.SQLException;
-
-     import java.util.logging.Level;
-
-     import java.util.logging.Logger;
-
-     import javax.servlet.ServletException;
-
-     import javax.servlet.http.HttpServlet;
-
-     import javax.servlet.http.HttpServletRequest;
-
-     import javax.servlet.http.HttpServletResponse;
-
-     import javax.servlet.http.HttpSession;
-
-     import uts.isd.model.Student;
-
-     import uts.isd.model.dao.DBManager;
-
-     public class LoginServlet extends HttpServlet {
+    
+public class LoginServlet extends HttpServlet {
 
     
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        //retrieve the session
+        //1. retrieve the session
         HttpSession session = request.getSession();
-        //an instance of the validator
+        // 2. an instance of the validator
         Validator validator = new Validator();
-        RequestDispatcher view = null;
-        //get email and password 
-        String email = request.getParameter("email");
+        // 3. get email and password 
+        String email = request.getParameter("email"); 
         String password = request.getParameter("password");
         
-        //db manager
+        //4. db manager
         DBManager manager = (DBManager) session.getAttribute("manager");
-        
-        User user = null;
+        Student student = null;
   
         
         // incorrect email
@@ -60,13 +47,13 @@
         
         else { 
             try {
-                user = manager.findUser(email, password);
+                student = manager.findStudent(email, password);
                 
                 //if user found
-                if(user != null ){
-                    session.setAttribute("user",user);
-                    user.setActive(true); // user's active
-                    request.getRequestDispatcher("welcome.jsp").include(request,response);
+                if(student != null ){
+                    session.setAttribute("student",student);
+//                    student.set // user's active
+//                    request.getRequestDispatcher("welcome.jsp").include(request,response);
                 } else {
                     session.setAttribute("existErr","Student does not exist in the Database!");
                     request.getRequestDispatcher("login.jsp").include(request,response);
